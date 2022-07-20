@@ -9,13 +9,12 @@ routes.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome" });
 });
 
-// Private Routes
+// Private User Routes
 routes.get("/user/:id", checkToken, async (req, res) => {
   const id = req.params.id;
 
   //check if user exists
   const user = await User.findById(id, "-password");
-
   if (!user) {
     res.status(404).json({ message: "User not found!" });
   }
@@ -26,9 +25,9 @@ routes.get("/user/:id", checkToken, async (req, res) => {
 // Movies Routes
 routes.get("/movie", MovieController.index);
 routes.get("/movie/:_id", MovieController.detail);
-routes.post("/movie", MovieController.store);
-routes.delete("/movie/:_id", MovieController.delete);
-routes.patch("/movie/:_id", MovieController.update);
+routes.post("/movie", checkToken, MovieController.store);
+routes.delete("/movie/:_id", checkToken, MovieController.delete);
+routes.patch("/movie/:_id", checkToken, MovieController.update);
 
 // User Routes
 routes.post("/auth/register", UserController.register);
