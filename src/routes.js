@@ -1,16 +1,15 @@
 const express = require("express");
 const MovieController = require("./controllers/MovieController");
 const UserController = require("./controllers/UserController");
-const jwt = require("jsonwebtoken");
 const routes = express.Router();
-
 const User = require("./model/User");
+const checkToken = require("./middlewares/checkToken");
 
 routes.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome" });
 });
 
-// Private Route
+// Private Routes
 routes.get("/user/:id", checkToken, async (req, res) => {
   const id = req.params.id;
 
@@ -23,24 +22,6 @@ routes.get("/user/:id", checkToken, async (req, res) => {
 
   res.status(200).json({ user });
 });
-
-function checkToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
-    res.status(401).json({ message: "Unauthorized!" });
-  }
-
-  try {
-    const secret = process.env.SECRET;
-
-    jwt.verify(token, secret);
-    next();
-  } catch (error) {
-    res.status(400).json({ message: "Invalid Token!" });
-  }
-}
 
 // Movies Routes
 routes.get("/movie", MovieController.index);
