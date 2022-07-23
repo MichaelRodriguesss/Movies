@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 
 const DataSchema = new mongoose.Schema({
-  name: String,
-  description: String,
+  title: String,
+  thumb: String,
+  rating: String,
+  user_id: mongoose.Schema.Types.ObjectId,
 });
 
 const movies = mongoose.model("Movie", DataSchema);

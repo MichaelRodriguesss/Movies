@@ -95,4 +95,20 @@ module.exports = {
       res.status(500).json({ error: error });
     }
   },
+
+  // fav Movie
+  async movie(req, res) {
+    try {
+      const user = await User.create(
+        { _id },
+        {
+          movie: dataCreate,
+        },
+        { new: true }
+      );
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  },
 };

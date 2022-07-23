@@ -1,22 +1,40 @@
 const Movie = require("../model/Movie");
+const Users = require("../model/User");
 
 module.exports = {
   // Create
   async store(req, res) {
-    const { name, description } = req.body;
+    const { title, thumb, rating } = req.body;
 
-    if (!name) {
-      res.status(422).json({ error: "The name is necessary!" });
+    if (!title) {
+      res.status(422).json({ error: "The Title is necessary!" });
       return;
     }
 
     const dataCreate = {
-      name,
-      description,
+      title,
+      thumb,
+      rating,
+      user_id: req.session._id,
     };
 
     try {
-      await Movie.create(dataCreate);
+      const movie = await Movie.create(dataCreate);
+      await Users.findOneAndUpdate(
+        {
+          _id: req.session._id,
+        },
+        {
+          $addToSet: {
+            movies: {
+              _id: movie._id,
+              title,
+              thumb,
+              rating,
+            },
+          },
+        }
+      );
       res.status(201).json({ message: "Movie added succesfully" });
     } catch (error) {
       res.status(500).json({ error: error });
@@ -54,21 +72,39 @@ module.exports = {
   //Update
   async update(req, res) {
     const { _id } = req.params;
-    const { name, description } = req.body;
+    const { title, thumb, rating } = req.body;
 
     const dataCreate = {
-      name,
-      description,
+      title,
+      thumb,
+      rating,
     };
 
     try {
       const movies = await Movie.findOneAndUpdate({ _id }, dataCreate, {
         new: true,
       });
-
       if (!movies) {
-        res.status(422).json({ message: "User was not found!" });
+        res.status(422).json({ message: "Movie was not found!" });
+        return;
       }
+      const user = await Users.findById(req.session._id, "-password");
+      const newMovies = user.movies.map((movie) => {
+        if (movie._id.toString() == movies._id.toString()) {
+          movie.title = title;
+          movie.thumb = thumb;
+          movie.rating = rating;
+        }
+        return movie;
+      });
+      await Users.updateOne(
+        { _id: req.session._id },
+        {
+          $set: {
+            movies: newMovies,
+          },
+        }
+      );
 
       res.status(200).json(dataCreate);
     } catch (error) {
@@ -82,11 +118,22 @@ module.exports = {
 
     try {
       const movies = await Movie.findByIdAndDelete({ _id });
-
       if (!movies) {
         res.status(422).json({ message: "Movie was not found!" });
         return;
       }
+      const user = await Users.findById(req.session._id);
+      const newMovies = user.movies.filter(
+        (movie) => movie._id.toString() !== movies._id.toString()
+      );
+      await Users.updateOne(
+        { _id: req.session._id },
+        {
+          $set: {
+            movies: newMovies,
+          },
+        }
+      );
 
       res.status(200).json({ message: "Movie deleted Succesfully" });
     } catch (error) {

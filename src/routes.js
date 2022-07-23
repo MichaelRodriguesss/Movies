@@ -1,6 +1,7 @@
 const express = require("express");
-const MovieController = require("./controllers/MovieController");
+const MovieController = require("./controllers/CRUDController");
 const UserController = require("./controllers/UserController");
+const MoviesController = require("./controllers/MoviesController");
 const routes = express.Router();
 const User = require("./model/User");
 const checkToken = require("./middlewares/checkToken");
@@ -29,8 +30,13 @@ routes.post("/movie", checkToken, MovieController.store);
 routes.delete("/movie/:_id", checkToken, MovieController.delete);
 routes.patch("/movie/:_id", checkToken, MovieController.update);
 
+routes.get("/movies", MoviesController.all);
+routes.get("/movies/:id", MoviesController.show);
+routes.get("/movies/search", MoviesController.search);
+
 // User Routes
 routes.post("/auth/register", UserController.register);
 routes.post("/auth/login", UserController.login);
+routes.post("/auth/:_id", UserController.movie);
 
 module.exports = routes;
