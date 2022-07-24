@@ -7,8 +7,7 @@ module.exports = {
     const { title, thumb, rating } = req.body;
 
     if (!title) {
-      res.status(422).json({ error: "The Title is necessary!" });
-      return;
+      return res.status(422).json({ error: "The Title is necessary!" });
     }
 
     const dataCreate = {
@@ -85,8 +84,7 @@ module.exports = {
         new: true,
       });
       if (!movies) {
-        res.status(422).json({ message: "Movie was not found!" });
-        return;
+        return res.status(422).json({ message: "Movie was not found!" });
       }
       const user = await Users.findById(req.session._id, "-password");
       const newMovies = user.movies.map((movie) => {
@@ -119,8 +117,7 @@ module.exports = {
     try {
       const movies = await Movie.findByIdAndDelete({ _id });
       if (!movies) {
-        res.status(422).json({ message: "Movie was not found!" });
-        return;
+        return res.status(422).json({ message: "Movie was not found!" });
       }
       const user = await Users.findById(req.session._id);
       const newMovies = user.movies.filter(

@@ -8,30 +8,27 @@ module.exports = {
     const { username, email, password, confirmpassword } = req.body;
 
     if (!username) {
-      res.status(422).json({ message: "The Username is necessary!" });
-      return;
+      return res.status(422).json({ message: "The Username is necessary!" });
     }
 
     if (!email) {
-      res.status(422).json({ message: "The E-mail is necessary!" });
-      return;
+      return res.status(422).json({ message: "The E-mail is necessary!" });
     }
 
     if (!password) {
-      res.status(422).json({ message: "The Password is necessary!" });
-      return;
+      return res.status(422).json({ message: "The Password is necessary!" });
     }
 
     if (password !== confirmpassword) {
-      res.status(422).json({ message: "The passwords do not match!" });
-      return;
+      return res.status(422).json({ message: "The passwords do not match!" });
     }
 
     // check if user exists
     const userExists = await User.findOne({ email: email });
     if (userExists) {
-      res.status(422).json({ message: "Please try to use another E-mail!" });
-      return;
+      return res
+        .status(422)
+        .json({ message: "Please try to use another E-mail!" });
     }
 
     // create password
@@ -58,20 +55,17 @@ module.exports = {
     const { email, password } = req.body;
 
     if (!email) {
-      res.status(422).json({ message: "The E-mail is necessary!" });
-      return;
+      return res.status(422).json({ message: "The E-mail is necessary!" });
     }
 
     if (!password) {
-      res.status(422).json({ message: "The Password is necessary!" });
-      return;
+      return res.status(422).json({ message: "The Password is necessary!" });
     }
 
     // check if user exists
     const user = await User.findOne({ email: email });
     if (!user) {
-      res.status(404).json({ message: "User not found!" });
-      return;
+      return res.status(404).json({ message: "User not found!" });
     }
 
     // check if the password match

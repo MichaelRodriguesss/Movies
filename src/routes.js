@@ -1,5 +1,5 @@
 const express = require("express");
-const MovieController = require("./controllers/CRUDController");
+const CrudController = require("./controllers/CrudController");
 const UserController = require("./controllers/UserController");
 const MoviesController = require("./controllers/MoviesController");
 const routes = express.Router();
@@ -23,13 +23,14 @@ routes.get("/user/:id", checkToken, async (req, res) => {
   res.status(200).json({ user });
 });
 
-// Movies Routes
-routes.get("/movie", MovieController.index);
-routes.get("/movie/:_id", MovieController.detail);
-routes.post("/movie", checkToken, MovieController.store);
-routes.delete("/movie/:_id", checkToken, MovieController.delete);
-routes.patch("/movie/:_id", checkToken, MovieController.update);
+// CRUD Routes
+routes.get("/movie", CrudController.index);
+routes.get("/movie/:_id", CrudController.detail);
+routes.post("/movie", checkToken, CrudController.store);
+routes.delete("/movie/:_id", checkToken, CrudController.delete);
+routes.patch("/movie/:_id", checkToken, CrudController.update);
 
+// Movies Routes
 routes.get("/movies", MoviesController.all);
 routes.get("/movies/:id", MoviesController.show);
 routes.get("/movies/search", MoviesController.search);
